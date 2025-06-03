@@ -28,7 +28,7 @@ function App() {
         <Route path="/users" element={<UserList />} />
         <Route path="/users/new" element={<CreateUser />} />
         <Route path="/users/:id/edit" element={<EditUser />} />
-        <Route path="*" element={<Navigate to="/\" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
