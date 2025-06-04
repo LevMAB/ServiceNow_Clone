@@ -88,7 +88,7 @@ The following test accounts are available for testing:
 |----------------|----------|-----------|
 | admin@test.com | test123  | Admin     |
 | agent1@test.com| test123  | Agent     |
-| agent2@test.com| test123  | Agent     |
+| agent3@test.com| test123  | Agent     |
 | user1@test.com | test123  | Requester |
 | user2@test.com | test123  | Requester |
 
