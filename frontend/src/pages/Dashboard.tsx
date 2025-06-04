@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { LayoutDashboard, Ticket, Users, Settings } from 'lucide-react';
@@ -63,18 +63,25 @@ export default function Dashboard() {
                 <span className="ml-2 text-xl font-bold text-gray-900">ServiceDesk</span>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <a href="#" className="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                <Link
+                  to="/dashboard"
+                  className="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
                   Dashboard
-                </a>
-                                {/*This should lead us to a tag bellow should lead us to /tickets */}
-                <a href="#" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                </Link>
+                <Link
+                  to="/tickets"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
                   Tickets
-                </a>
-                {/*This should lead us to a tag bellow should lead us to /users */}
+                </Link>
                 {user.role === 'admin' && (
-                  <a href="#" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  <Link
+                    to="/users"
+                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  >
                     Users
-                  </a>
+                  </Link>
                 )}
               </div>
             </div>
