@@ -66,9 +66,11 @@ export default function Dashboard() {
                 <a href="#" className="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                   Dashboard
                 </a>
+                                {/*This should lead us to a tag bellow should lead us to /tickets */}
                 <a href="#" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                   Tickets
                 </a>
+                {/*This should lead us to a tag bellow should lead us to /users */}
                 {user.role === 'admin' && (
                   <a href="#" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                     Users
