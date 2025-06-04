@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Plus, RefreshCw, UserCog } from 'lucide-react';
+import { Plus, RefreshCw, UserCog, ArrowLeft } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 
 interface User {
@@ -72,7 +72,7 @@ export default function UserList() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-                  <Link
+        <Link
             to="/dashboard"
             className="inline-flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-200"
           >
