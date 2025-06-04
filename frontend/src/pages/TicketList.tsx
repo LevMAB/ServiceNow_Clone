@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw, ArrowLeft } from 'lucide-react';
 
 interface Ticket {
   id: string;
@@ -52,8 +52,16 @@ export default function TicketList() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Tickets</h1>
-        {/*TODO: Add a button to lead the user back to dashboard*/}
+        <div className="flex items-center gap-4">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-200"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Dashboard
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900">Tickets</h1>
+        </div>
         <Link
           to="/tickets/new"
           className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
