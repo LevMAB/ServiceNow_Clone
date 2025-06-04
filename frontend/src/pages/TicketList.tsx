@@ -53,6 +53,7 @@ export default function TicketList() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Tickets</h1>
+        {/*TODO: Add a button to lead the user back to dashboard*/}
         <Link
           to="/tickets/new"
           className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
