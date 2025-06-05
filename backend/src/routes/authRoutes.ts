@@ -8,10 +8,15 @@ const router = Router();
 router.post('/signup', async (req, res) => {
   const { email, password, role } = req.body;
 
+  // Validate input
+  if (!email || !password || !role) {
+    return res.status(400).json({ error: 'Email, password and role are required' });
+  }
+
   // Validate role
   const validRoles = ['admin', 'agent', 'requester'];
   if (!validRoles.includes(role)) {
-    return res.status(400).json({ error: 'Invalid role' });
+    return res.status(400).json({ error: 'Invalid role. Must be admin, agent, or requester' });
   }
 
   try {
@@ -29,7 +34,13 @@ router.post('/signup', async (req, res) => {
       .select()
       .single();
 
-    if (userError) throw userError;
+    if (userError) {
+      // Check for duplicate email error
+      if (userError.code === '23505') {
+        return res.status(409).json({ error: 'A user with this email already exists' });
+      }
+      throw userError;
+    }
 
     // Create role for the user
     const { error: roleError } = await supabase
@@ -42,6 +53,10 @@ router.post('/signup', async (req, res) => {
     if (roleError) {
       // Rollback if role creation fails
       await supabase.from('users').delete().eq('id', userData.id);
+      
+      if (roleError.code === '23505') {
+        return res.status(409).json({ error: 'User role already exists' });
+      }
       throw roleError;
     }
 
@@ -53,12 +68,24 @@ router.post('/signup', async (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    // Log the error for debugging (in a production environment)
+    console.error('Signup error:', error);
+    
+    // Send a user-friendly error message
+    res.status(400).json({ 
+      error: (error instanceof Error) 
+        ? error.message 
+        : 'An error occurred during signup. Please try again.'
+    });
   }
 });
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
 
   try {
     // Get user from database
@@ -69,13 +96,13 @@ router.post('/login', async (req, res) => {
       .single();
 
     if (userError || !userData) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     // Compare password
     const isValidPassword = await bcrypt.compare(password, userData.password);
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     // Get user role
@@ -85,7 +112,9 @@ router.post('/login', async (req, res) => {
       .eq('user_id', userData.id)
       .single();
 
-    if (roleError) throw roleError;
+    if (roleError) {
+      return res.status(500).json({ error: 'Error retrieving user role' });
+    }
 
     const token = jwt.sign(
       { userId: userData.id, email: userData.email, role: roleData.role },
@@ -95,7 +124,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    console.error('Login error:', error);
+    res.status(401).json({ error: 'An error occurred during login. Please try again.' });
   }
 });
 
