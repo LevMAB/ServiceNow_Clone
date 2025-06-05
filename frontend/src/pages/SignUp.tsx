@@ -33,12 +33,13 @@ export default function SignUp() {
       navigate('/dashboard');
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data?.error || 'Failed to sign up';
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign up';
         setError(errorMessage);
-        console.error('Sign up error:', err.response?.data);
+        console.error('Sign up error:', errorMessage, err.response?.data);
       } else {
-        setError('An unexpected error occurred');
-        console.error('Unexpected error:', err);
+        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+        setError(errorMessage);
+        console.error('Unexpected error:', errorMessage);
       }
     } finally {
       setIsLoading(false);
