@@ -33,7 +33,8 @@ export default function SignUp() {
       navigate('/dashboard');
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || 'Failed to sign up');
+        const errorMessage = err.response?.data?.error || 'Failed to sign up';
+        setError(errorMessage);
         console.error('Sign up error:', err.response?.data);
       } else {
         setError('An unexpected error occurred');
