@@ -17,7 +17,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        {/* 🔓 DEVELOPMENT AUTO-LOGIN - REMOVE BEFORE PRODUCTION 🔓 */}
+        <Route path="/" element={<Navigate to="/autologin" replace />} />
+        
+        {/* Original routes for manual access if needed */}
+        <Route path="/landing" element={<Landing />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/autologin" element={<AutoLogin />} />
         <Route path="/signup" element={<SignUp />} />
@@ -30,7 +34,7 @@ function App() {
         <Route path="/users" element={<UserList />} />
         <Route path="/users/new" element={<CreateUser />} />
         <Route path="/users/:id/edit" element={<EditUser />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/autologin" replace />} />
       </Routes>
     </Router>
   );
