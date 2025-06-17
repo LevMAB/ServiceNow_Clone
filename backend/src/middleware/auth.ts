@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { 
+  testConfig, 
+  validateTestEnvironment, 
+  getTestAdminUser,
+  logTestBypassUsage 
+} from '../config/testConfig';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -24,6 +30,27 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       email: string;
       role: string;
     };
+
+    // ⚠️ TEST-ONLY BYPASS - REMOVE BEFORE PRODUCTION ⚠️
+    if (validateTestEnvironment() && decoded.userId === testConfig.adminBypass.testUserId) {
+      console.warn('🔓 TEST ADMIN MIDDLEWARE BYPASS - This should NEVER appear in production!');
+      
+      const testUser = getTestAdminUser();
+      req.user = {
+        userId: testUser.id,
+        email: testUser.email,
+        role: testUser.role
+      };
+
+      logTestBypassUsage('TEST_ADMIN_MIDDLEWARE_BYPASS', {
+        route: req.path,
+        method: req.method,
+        userAgent: req.get('User-Agent')
+      });
+
+      return next();
+    }
+    // ⚠️ END TEST BYPASS ⚠️
     
     req.user = decoded;
     next();

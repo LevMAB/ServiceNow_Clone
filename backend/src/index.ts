@@ -5,9 +5,19 @@ import authRoutes from './routes/authRoutes';
 import ticketRoutes from './routes/ticketRoutes';
 import commentRoutes from './routes/commentRoutes';
 import { authMiddleware, AuthRequest } from './middleware/auth';
+import { performProductionSafetyCheck } from './config/productionSafetyCheck';
 
 // Load environment variables
 dotenv.config();
+
+// ⚠️ CRITICAL PRODUCTION SAFETY CHECK ⚠️
+// This prevents test code from running in production
+try {
+  performProductionSafetyCheck();
+} catch (error) {
+  console.error('Production safety check failed:', error);
+  process.exit(1); // Exit immediately if test code detected in production
+}
 
 // Initialize express app
 const app = express();
@@ -37,6 +47,18 @@ app.get('/api/dashboard', authMiddleware, (req: AuthRequest, res: Response) => {
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK' });
 });
+
+// ⚠️ TEST ENVIRONMENT WARNING ⚠️
+if (process.env.NODE_ENV === 'development' && process.env.TEST_MODE === 'true') {
+  console.warn(`
+🔓🔓🔓 TEST ENVIRONMENT ACTIVE 🔓🔓🔓
+⚠️  Test admin bypass available
+⚠️  Email: test-admin@localhost.dev
+⚠️  Password: TEST_ONLY_BYPASS_2025
+⚠️  REMOVE before production!
+🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓🔓
+  `);
+}
 
 // Start server
 app.listen(PORT, () => {

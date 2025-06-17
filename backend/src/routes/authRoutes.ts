@@ -2,6 +2,13 @@ import { Router } from 'express';
 import { supabase } from '../auth/supabaseClient';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { 
+  testConfig, 
+  validateTestEnvironment, 
+  isTestAdminBypass, 
+  getTestAdminUser,
+  logTestBypassUsage 
+} from '../config/testConfig';
 
 const router = Router();
 
@@ -88,6 +95,29 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    // ⚠️ TEST-ONLY BYPASS - REMOVE BEFORE PRODUCTION ⚠️
+    if (validateTestEnvironment() && isTestAdminBypass(email, password)) {
+      console.warn('🔓 TEST ADMIN BYPASS USED - This should NEVER appear in production!');
+      
+      const testUser = getTestAdminUser();
+      const token = jwt.sign(
+        { userId: testUser.id, email: testUser.email, role: testUser.role },
+        process.env.JWT_SECRET!,
+        { expiresIn: '24h' }
+      );
+
+      logTestBypassUsage('TEST_ADMIN_TOKEN_GENERATED', { 
+        email: testUser.email,
+        tokenExpiry: '24h'
+      });
+
+      return res.json({ 
+        token,
+        warning: '⚠️ TEST BYPASS ACTIVE - REMOVE BEFORE PRODUCTION ⚠️'
+      });
+    }
+    // ⚠️ END TEST BYPASS ⚠️
+
     // Get user from database
     const { data: userData, error: userError } = await supabase
       .from('users')
